@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animação de Ave com Sprite Sheet</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #e0f7fa; /* Cor de fundo para simular o céu/ambiente */
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Elemento da ave */
+        #ave {
+            position: absolute;
+            width: 418px;
+            height: 418px;
+            /* Defina o caminho correto para o seu sprite sheet abaixo */
+            background-image: url('bird01.png');
+            background-repeat: no-repeat;
+            /* Escala opcional caso o sprite seja muito grande para a tela */
+            transform-origin: center center;
+            will-change: transform, left, top, background-position;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ave"></div>
+
+    <script>
+        const ave = document.getElementById('ave');
+
+        // Coordenadas dos quadros (posições 1 a 9)
+        const frames = [
+            { x: 0, y: 0 },     // 1
+            { x: 418, y: 0 },   // 2
+            { x: 836, y: 0 },   // 3
+            { x: 0, y: 418 },   // 4
+            { x: 418, y: 418 }, // 5
+            { x: 836, y: 418 }, // 6
+            { x: 0, y: 836 },   // 7
+            { x: 418, y: 836 }, // 8
+            { x: 836, y: 836 }  // 9
+        ];
+
+        // Dimensões do quadro
+        const frameSize = 418;
+        
+        // Posição inicial (Inferior esquerda)
+        const startX = 50;
+        const startY = window.innerHeight - frameSize - 50;
+
+        let posX = startX;
+        let posY = startY;
+
+        function setFrame(frameIndex, flip = false) {
+            const f = frames[frameIndex];
+            ave.style.backgroundPosition = `-${f.x}px -${f.y}px`;
+            ave.style.transform = flip ? 'scaleX(-1)' : 'scaleX(1)';
+        }
+
+        function setPosition(x, y) {
+            posX = x;
+            posY = y;
+            ave.style.left = `${x}px`;
+            ave.style.top = `${y}px`;
+        }
+
+        // Função principal de controle da linha do tempo da animação
+        async function iniciarAnimacao() {
+            while (true) {
+                // --- ETAPA 1: Pousada estática na posição 1 por 3 segundos ---
+                setPosition(startX, startY);
+                setFrame(0, false); // Posição 1
+                await new Promise(r => setTimeout(r, 3000));
+
+                // --- ETAPA 2: Loop entre posições 1 e 2 durante 5 segundos ---
+                let tempoPassado = 0;
+                let toggle = false;
+                while (tempoPassado < 5000) {
+                    toggle = !toggle;
+                    setFrame(toggle ? 1 : 0, false); // Alterna entre Pos 1 e Pos 2
+                    await new Promise(r => setTimeout(r, 200)); // 200ms por quadro
+                    tempoPassado += 200;
+                }
+
+                // --- ETAPA 3: Levantando voo (sequência de 3 até 8) ---
+                const takeoffFrames = [2, 3, 4, 5, 6, 7]; // Posições 3 a 8 (índices 2 a 7)
+                for (let fIdx of takeoffFrames) {
+                    setFrame(fIdx, false);
+                    await new Promise(r => setTimeout(r, 120));
+                }
+
+                // --- ETAPA 4: Voo aleatório por 30 segundos (Loop posições 5 a 8) ---
+                let targetX = posX;
+                let targetY = posY;
+                let currentFlyFrameIdx = 4; // Começa na posição 5 (índice 4)
+
+                // Definir primeiro destino aleatório no ar
+                function novoDestino() {
+                    targetX = Math.random() * (window.innerWidth - frameSize - 100) + 50;
+                    targetY = Math.random() * (window.innerHeight - frameSize - 200) + 50;
+                }
+                novoDestino();
+
+                let flightStartTime = Date.now();
+                while (Date.now() - flightStartTime < 30000) {
+                    // Mover suavemente em direção ao alvo (velocidade dobrada: de 4 para 8)
+                    let dx = targetX - posX;
+                    let dy = targetY - posY;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    let speed = 24; 
+                    let flip = dx < 0; // Se move para a esquerda, espelha a imagem
+
+                    if (dist < speed) {
+                        posX = targetX;
+                        posY = targetY;
+                        novoDestino();
+                    } else {
+                        posX += (dx / dist) * speed;
+                        posY += (dy / dist) * speed;
+                    }
+
+                    setPosition(posX, posY);
+
+                    // Animar ciclo de asas (loop 5 a 8 -> índices 4, 5, 6, 7)
+                    setFrame(currentFlyFrameIdx, flip);
+                    currentFlyFrameIdx++;
+                    if (currentFlyFrameIdx > 7) currentFlyFrameIdx = 4;
+
+                    // Velocidade da troca de quadros multiplicada por 0,5 (intervalo de 80ms passa a ser 160ms)
+                    await new Promise(r => setTimeout(r, 70));
+                }
+
+                // --- ETAPA 5: Retorno ao ponto de partida ---
+                let returning = true;
+                while (returning) {
+                    let dx = startX - posX;
+                    let dy = startY - posY;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    let speed = 24; // Mesma velocidade de voo ajustada
+                    let flip = dx < 0;
+
+                    if (dist < speed) {
+                        posX = startX;
+                        posY = startY;
+                        returning = false;
+                    } else {
+                        posX += (dx / dist) * speed;
+                        posY += (dy / dist) * speed;
+                    }
+
+                    setPosition(posX, posY);
+
+                    setFrame(currentFlyFrameIdx, flip);
+                    currentFlyFrameIdx++;
+                    if (currentFlyFrameIdx > 7) currentFlyFrameIdx = 4;
+
+                    await new Promise(r => setTimeout(r, 70));
+                }
+
+                // --- ETAPA 6: Sequência de Pouso (9, 4, 3, 1) ---
+                const landingSequence = [8, 3, 2, 0]; // Índices correspondentes às posições 9, 4, 3 e 1
+                for (let fIdx of landingSequence) {
+                    setFrame(fIdx, false);
+                    await new Promise(r => setTimeout(r, 300)); // Pausa maior para transição de pouso suave
+                }
+
+                // Pausa breve antes de reiniciar o ciclo completo
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        // Iniciar a animação quando a página carregar
+        window.onload = iniciarAnimacao;
+    </script>
+</body>
+</html>

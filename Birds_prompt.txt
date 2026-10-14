@@ -1,0 +1,27 @@
+Gere uma imagem em tamanho de um quadrado perfeito, no formato png com fundo transparente, para servir de sprite sheet para uma animação.
+Dentro da imagem deve haver 9 posições do personagem a seguir, posicionadas em 9 áreas delimitadas de forma invisível, cada área com formato de quadrado perfeito, sendo portanto, 3 x 3 divisões de espaço na figura. Cada posição do personagem será uma continuação da anterior e portanto, o tamanho, cores e formas deve manter consistência.
+Personagem: ave Tangara cyanocephala
+Posições:
+1 - Em pé de lado virada para a direita com o bico fechado
+2 - Em pé de lado virada para a direita com a cabeça na mesma posição e o bico aberto cantando
+3 - Em pé de lado virada para a direita com o bico fechado começando a abrir as asas
+4 - De lado virada para a direita com as asas abertas alinhadas em relação ao meio do corpo
+5 - De lado virada para a direita, patas encolhidas em posição de que está voando, com as asas abertas para cima e borrão de movimento das asas vindas da posição anterior para cima
+6 - De lado virada para a direita, patas encolhidas em posição de que está voando, com as asas abertas alinhadas em relação ao meio do corpo e borrão de movimento das asas vindas da posição anterior até o meio
+7 - De lado virada para a direita, patas encolhidas em posição de que está voando, com as asas abertas apontadas para baixo e borrão de movimento das asas vindas da posição anterior até embaixo
+8 - De lado virada para a direita, patas encolhidas em posição de que está voando, com as asas abertas alinhadas em relação ao meio do corpo e borrão de movimento das asas vindas da posição anterior até o meio
+9 - De lado virada para a direita, com as asas abertas para cima e borrão de movimento das asas vindas da posição anterior para cima e com aspatas esticadas em posição de que vai pousar e agarrar o local de pouso. Esta imagem deve ser bem ajustada de forma que possa formar um loop com a posição 4 descrita acima.
+
+
+Tenho um sprite sheet de uma ave e preciso testar se a animação ficará boa em html.
+Aqui estão as descrições das posições
+Posição 1 x = 0 y = 0
+Posição 2 x = 418 y = 0
+Posição 3 x = 836 y = 0
+Posição 4 x = 0 y = 418
+Posição 5 x = 418 y = 418
+Posição 6 x = 836 y = 418
+Posição 7 x = 0 y = 836
+Posição 8 x = 418 y = 836
+Posição 9 x = 836 y = 836
+Crie um html para mim onde a ave inicia pousada na parte inferior esquerda da tela. Estática na posição 1 por 3 segundos. Após isso a ave fica no mesmo lugar fazendo um loop entre as posições 1 e 2 durante 5 segundos. Após isso a ave vai começar a se deslocar do lugar levantando voo, entrando na sequência das posições 3 até a posição 8. Quando a ave chegar à posição nove ela continua fazendo um loop das posições 5 a 8 continuamente. Ela voa por várias posições aleatórias na tela durante 30 segundos. Como no sprite sheet ela está virada para a direita, toda vez que ela for voar para a esquerda a imagem precisa ser espelhada. Após isso a ave retorna para o lugar de onde saiu na tela. Ao se aproximar para fazer o pouso, conforme estiver pousando ela faz uma sequência das seguintes posições: 9, 4, 3 e 1. A partir daí a animação se reinicia.
